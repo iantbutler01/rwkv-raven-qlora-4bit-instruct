@@ -104,18 +104,6 @@ class InstructionTextGenerationPipeline(Pipeline):
         else:
             in_b = input_ids.shape[0]
 
-        class IsBork(LogitsProcessor):
-            def __call__(self, input_ids, scores):
-                print(scores)
-                return scores
-
-        generated_sequence = self.model.generate(
-            input_ids=input_ids.to(self.model.device),
-            attention_mask=attention_mask,
-            logits_processor=LogitsProcessorList([IsBork()]),
-            pad_token_id=self.tokenizer.pad_token_id,
-            **generate_kwargs,
-        )
 
         out_b = generated_sequence.shape[0]
         if self.framework == "pt":

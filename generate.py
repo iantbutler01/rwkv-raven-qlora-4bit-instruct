@@ -1,4 +1,4 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, LogitsProcessor
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, LogitsProcessor, LogitsProcessorList
 import torch
 from consts import PROMPT_FOR_GENERATION_FORMAT
 from instruct_pipeline import InstructionTextGenerationPipeline
@@ -10,19 +10,22 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_compute_dtype=torch.bfloat16,
 )
 
-# bnb_config = BitsAndBytesConfig(
-#     load_in_8bit=True
-# )
+print(bnb_config.load_in_4bit)
 
+model_id = ""
+model_id = "tiiuae/falcon-40b-instruct"
 model = AutoModelForCausalLM.from_pretrained(
-    "RWKV/rwkv-raven-14b",
+    model_id,
     return_dict=True,
     torch_dtype=torch.float16,
     quantization_config=bnb_config,
-    rescale_every=0,
-).cuda()
+    # context_length=1024,
+    # rescale_every=0,
+    trust_remote_code=True,
+    device_map={"":0}
+)
 
-tokenizer = AutoTokenizer.from_pretrained("RWKV/rwkv-raven-14b")
+tokenizer = AutoTokenizer.from_pretrained(model_id)
 
 pipeline = InstructionTextGenerationPipeline(
     model=model,
@@ -30,15 +33,35 @@ pipeline = InstructionTextGenerationPipeline(
     top_p=0.92,
     top_k=50,
     temperature=1.0,
-    do_sample=True
+    do_sample=False
 )
-
+instruction = "Write me the steps to make a peanut butter and jelly sandwich"
 prompt = PROMPT_FOR_GENERATION_FORMAT.format(
-    instruction="Write me the steps to make a peanut butter and jelly sandwich.",
+    instruction=instruction,
 )
 
+class IsBork(LogitsProcessor):
+    def __call__(self, input_ids, scores):
+        print(scores)
+        return scores
+    
+# prompt = f"Bob: {instruction}\nAlice: "
 prompt = str(prompt)
+inputs = tokenizer(prompt, return_tensors="pt")
 
-gen = pipeline(prompt, max_new_tokens=512)
+input_ids, attention_mask = inputs["input_ids"], inputs["attention_mask"]
+input_ids, attention_mask = input_ids.to("cuda"), attention_mask.to("cuda")
 
-print(gen)
+generated_sequence = model.generate(
+    input_ids=input_ids,
+    attention_mask=attention_mask,
+    pad_token_id=tokenizer.pad_token_id,
+    top_p=0.92,
+    top_k=50,
+    temperature=1.0,
+    do_sample=False,
+    max_new_tokens=512
+)
+
+generated_sequence = tokenizer.decode(generated_sequence[0], skip_special_tokens=False)
+print(generated_sequence)
