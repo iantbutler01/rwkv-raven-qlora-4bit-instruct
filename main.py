@@ -12,7 +12,7 @@ disable_caching()
 class RWKVPipeline(Pipeline):
     def dataset(self):
         data = Data(
-            load_kwargs={"dataset": self.dataset_name},
+            load_kwargs={"path": self.dataset_namespace},
             grad_accum=self.grad_accum,
             batch_size=self.batch_size,
             tokenizer=self.tokenizer,
@@ -66,7 +66,7 @@ class RWKVPipeline(Pipeline):
 
 if __name__ == "__main__":
     pipeline = RWKVPipeline(
-        dataset_name="databricks/databricks-dolly-15k",
+        dataset_namespace="databricks/databricks-dolly-15k",
         model_name_or_path="RWKV/rwkv-raven-14b",
         gradient_checkpointing=False,
         block_size=512,
