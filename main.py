@@ -12,7 +12,7 @@ disable_caching()
 class RWKVPipeline(Pipeline):
     def dataset(self):
         data = Data(
-            load_args=(self.dataset_name,),
+            load_kwargs={"dataset": self.dataset_name},
             grad_accum=self.grad_accum,
             batch_size=self.batch_size,
             tokenizer=self.tokenizer,
