@@ -5,9 +5,7 @@ from itertools import chain
 from datasets import disable_caching
 from consts import PROMPT_WITH_INPUT_FORMAT, PROMPT_NO_INPUT_FORMAT
 from collator import DataCollatorForCompletionOnlyLM
-
-disable_caching()
-
+import os
 
 class RWKVPipeline(Pipeline):
     def dataset(self):
@@ -67,17 +65,19 @@ class RWKVPipeline(Pipeline):
 if __name__ == "__main__":
     pipeline = RWKVPipeline(
         dataset_namespace="databricks/databricks-dolly-15k",
-        model_name_or_path="RWKV/rwkv-raven-14b",
+        model_name_or_path="mistralai/Mistral-7B-v0.1",
         gradient_checkpointing=False,
-        block_size=512,
-        grad_accum=32,
+        block_size=128,
+        grad_accum=8,
         batch_size=1,
-        l4bit=True,
+        l4bit=False,
         l8bit=False,
         experimental=True,
         fp16=True,
-        use_bfloat16=True
-        
+        use_bfloat16=False,
+        #use_fsdp=True,
+        use_deep_speed=True
+        #use_8bit_optim=True
     )
 
     pipeline.run()
