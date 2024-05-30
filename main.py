@@ -69,15 +69,15 @@ if __name__ == "__main__":
         gradient_checkpointing=False,
         block_size=128,
         grad_accum=8,
-        batch_size=16,
-        l4bit=False,
-        l8bit=True,
+        batch_size=1,
+        l4bit=True,
+        l8bit=False,
         experimental=True,
-        fp16=True,
-        use_bfloat16=False,
+        fp16=False,
+        use_bfloat16=True,
         use_fsdp=False,
         use_deep_speed=True,
-        use_qdora=True
+        use_qdora=False
         #use_8bit_optim=True
     )
 

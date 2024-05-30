@@ -1,0 +1,1 @@
+using pdsh for distributed setup is a success!
