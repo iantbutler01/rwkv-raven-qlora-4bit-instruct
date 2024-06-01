@@ -67,17 +67,18 @@ if __name__ == "__main__":
         dataset_namespace="databricks/databricks-dolly-15k",
         model_name_or_path="mistralai/Mistral-7B-v0.1",
         gradient_checkpointing=False,
-        block_size=128,
+        checkpoint_every=10,
+        block_size=512,
         grad_accum=8,
-        batch_size=1,
+        batch_size=4,
         l4bit=True,
         l8bit=False,
-        experimental=True,
         fp16=False,
         use_bfloat16=True,
         use_fsdp=False,
         use_deep_speed=True,
-        use_qdora=False
+        use_qdora=False,
+        output_hub_repo="KinglyCrow/test_trainer"
         #use_8bit_optim=True
     )
 
