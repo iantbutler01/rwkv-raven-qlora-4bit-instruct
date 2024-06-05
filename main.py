@@ -66,7 +66,7 @@ if __name__ == "__main__":
     pipeline = RWKVPipeline(
         dataset_namespace="databricks/databricks-dolly-15k",
         model_name_or_path="meta-llama/Meta-Llama-3-70B",
-        gradient_checkpointing=False,
+        gradient_checkpointing=True,
         checkpoint_every=10,
         block_size=128,
         grad_accum=8,
