@@ -65,12 +65,12 @@ class RWKVPipeline(Pipeline):
 if __name__ == "__main__":
     pipeline = RWKVPipeline(
         dataset_namespace="databricks/databricks-dolly-15k",
-        model_name_or_path="mistralai/Mistral-7B-v0.1",
+        model_name_or_path="meta-llama/Meta-Llama-3-70B",
         gradient_checkpointing=False,
         checkpoint_every=10,
-        block_size=512,
+        block_size=128,
         grad_accum=8,
-        batch_size=4,
+        batch_size=1,
         l4bit=True,
         l8bit=False,
         fp16=False,
